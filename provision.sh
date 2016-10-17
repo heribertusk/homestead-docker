@@ -19,16 +19,17 @@ sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_co
 sed -i "s/UsePAM.*/UsePAM no/g" /etc/ssh/sshd_config
 sed -i "s/PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
 
-# Basic packages
-apt-get install -y sudo software-properties-common nano curl \
-build-essential dos2unix gcc git git-flow libmcrypt4 libpcre3-dev apt-utils \
-make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim zip unzip
-
 # PPA
+apt-add-repository ppa:nginx/development -y
 apt-add-repository ppa:ondrej/php -y
 
 # Update Package Lists
 apt-get update
+
+# Basic packages
+apt-get install -y sudo software-properties-common nano curl \
+build-essential dos2unix gcc git git-flow libmcrypt4 libpcre3-dev apt-utils \
+make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim zip unzip
 
 # Create homestead user
 adduser homestead
@@ -46,6 +47,14 @@ php-mysql php-pgsql php-sqlite3 \
 php-apcu php-json php-curl php-gd \
 php-gmp php-imap php-mcrypt php-xdebug \
 php-memcached php-redis php-mbstring php-zip
+
+# Install PHP Stuffs
+
+apt-get install -y --force-yes php7.0-cli php7.0-dev \
+php-gd php-apcu php-pear \
+php-curl php7.0-mcrypt \
+php-imap php-mysql php-memcached php7.0-readline php-xdebug \
+php-mbstring php-xml php7.0-zip php7.0-intl php7.0-bcmath php-soap
 
 # Nginx & PHP-FPM
 apt-get install -y nginx php-fpm
@@ -90,6 +99,30 @@ echo "xdebug.max_nesting_level = 500" >> /etc/php/7.0/fpm/conf.d/20-xdebug.ini
 # Not xdebug when on cli
 phpdismod -s cli xdebug
 
+# Copy fastcgi_params to Nginx because they broke it on the PPA
+
+cat > /etc/nginx/fastcgi_params << EOF
+fastcgi_param	QUERY_STRING		\$query_string;
+fastcgi_param	REQUEST_METHOD		\$request_method;
+fastcgi_param	CONTENT_TYPE		\$content_type;
+fastcgi_param	CONTENT_LENGTH		\$content_length;
+fastcgi_param	SCRIPT_FILENAME		\$request_filename;
+fastcgi_param	SCRIPT_NAME		\$fastcgi_script_name;
+fastcgi_param	REQUEST_URI		\$request_uri;
+fastcgi_param	DOCUMENT_URI		\$document_uri;
+fastcgi_param	DOCUMENT_ROOT		\$document_root;
+fastcgi_param	SERVER_PROTOCOL		\$server_protocol;
+fastcgi_param	GATEWAY_INTERFACE	CGI/1.1;
+fastcgi_param	SERVER_SOFTWARE		nginx/\$nginx_version;
+fastcgi_param	REMOTE_ADDR		\$remote_addr;
+fastcgi_param	REMOTE_PORT		\$remote_port;
+fastcgi_param	SERVER_ADDR		\$server_addr;
+fastcgi_param	SERVER_PORT		\$server_port;
+fastcgi_param	SERVER_NAME		\$server_name;
+fastcgi_param	HTTPS			\$https if_not_empty;
+fastcgi_param	REDIRECT_STATUS		200;
+EOF
+
 # Set The Nginx & PHP-FPM User
 sed -i '1 idaemon off;' /etc/nginx/nginx.conf
 sed -i "s/user www-data;/user homestead;/" /etc/nginx/nginx.conf
@@ -104,10 +137,10 @@ sed -i "s/;listen\.group.*/listen.group = homestead/" /etc/php/7.0/fpm/pool.d/ww
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.0/fpm/pool.d/www.conf
 
 # Install Node
-curl --silent --location https://deb.nodesource.com/setup_6.x | bash -
+curl --silent --location https://deb.nodesource.com/setup_4.x | bash -
 apt-get install -y nodejs
 npm install -g grunt-cli
-npm install -g gulp
+npm install -g gulp-cli
 npm install -g bower
 
 # Install SQLite
@@ -118,7 +151,7 @@ apt-get install -y memcached
 
 # Beanstalkd
 apt-get install -y beanstalkd
-sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd
+sed -i "s/#START=yes/START=no/" /etc/default/beanstalkd
 
 # Redis
 apt-get install -y redis-server
@@ -127,7 +160,7 @@ sed -i "s/daemonize yes/daemonize no/" /etc/redis/redis.conf
 # Configure default nginx site
 block="server {
     listen 80 default_server;
-    listen [::]:80 default_server ipv6only=on;
+    listen [::]:80 default_server ipv6only=off;
 
     root /var/www/html;
     server_name localhost;
