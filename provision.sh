@@ -21,6 +21,7 @@ sed -i "s/PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
 
 # PPA
 apt-add-repository ppa:nginx/development -y
+apt-add-repository ppa:chris-lea/redis-server -y
 apt-add-repository ppa:ondrej/php -y
 
 # Update Package Lists
@@ -29,7 +30,8 @@ apt-get update
 # Basic packages
 apt-get install -y sudo software-properties-common nano curl \
 build-essential dos2unix gcc git git-flow libmcrypt4 libpcre3-dev apt-utils \
-make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim zip unzip
+make python2.7-dev python-pip re2c supervisor unattended-upgrades whois \
+vim zip unzip libnotify-bin
 
 # Create homestead user
 adduser homestead
@@ -42,17 +44,9 @@ usermod -aG www-data homestead
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 # PHP
-apt-get install -y php-cli php-dev php-pear \
-php-mysql php-pgsql php-sqlite3 \
-php-apcu php-json php-curl php-gd \
-php-gmp php-imap php-mcrypt php-xdebug \
-php-memcached php-redis php-mbstring php-zip
-
-# Install PHP Stuffs
-
 apt-get install -y --force-yes php7.0-cli php7.0-dev \
-php-gd php-apcu php-pear \
-php-curl php7.0-mcrypt \
+php-sqlite3 php-gd php-apcu php-pear php-zip\
+php-curl php7.0-mcrypt php-redis php-gmp\
 php-imap php-mysql php-memcached php7.0-readline php-xdebug \
 php-mbstring php-xml php7.0-zip php7.0-intl php7.0-bcmath php-soap
 
@@ -72,6 +66,7 @@ printf "\nPATH=\"/home/homestead/.composer/vendor/bin:\$PATH\"\n" | tee -a /home
 # Laravel Envoy
 su homestead <<'EOF'
 /usr/local/bin/composer global require "laravel/envoy=~1.0"
+/usr/local/bin/composer global require "laravel/installer=~1.1"
 EOF
 
 # Set Some PHP CLI Settings
@@ -193,8 +188,7 @@ block="server {
     location ~ /\.ht {
         deny all;
     }
-}
-"
+}"
 
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
