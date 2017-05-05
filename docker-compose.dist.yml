@@ -10,9 +10,9 @@ web:
         - ~/.composer:/home/homestead/.composer # composer caching
         - ~/.gitconfig:/home/homestead/.gitconfig # Git configuration ( access alias && config )
         - ~/.ssh:/home/homestead/.ssh # Ssh keys for easy deployment inside the container
-        - ~/Project:/apps # all apps
-        - ~/Project/apps/volumes/nginx/sites-available:/etc/nginx/sites-available # nginx sites ( in case you recreate the container )
-        - ~/Project/apps/volumes/nginx/sites-enabled:/etc/nginx/sites-enabled # nginx sites ( in case you recreate the container )
+        - ~/Projects:/apps # all apps
+        - ~/Projects/apps/volumes/nginx/sites-available:/etc/nginx/sites-available # nginx sites ( in case you recreate the container )
+        - ~/Projects/apps/volumes/nginx/sites-enabled:/etc/nginx/sites-enabled # nginx sites ( in case you recreate the container )
     links:
         - mariadb
 
@@ -27,4 +27,4 @@ mariadb:
         MARIADB_PASSWORD: secret
         MARIADB_INNODB_BUFFER_POOL_SIZE: 20M
     volumes:
-        - ~/Project/apps/volumes/mysql:/var/lib/mysql # database files
+        - ~/Projects/apps/volumes/mysql:/var/lib/mysql # database files

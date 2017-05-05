@@ -206,7 +206,6 @@ rm /etc/nginx/sites-available/default
 
 cat > /etc/nginx/sites-enabled/default
 echo "$block" > "/etc/nginx/sites-enabled/default"
-touch /home/homestead/testing
 
 # Install CSH ZSH Shell Theme
 sudo apt-get install zsh -y
