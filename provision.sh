@@ -8,8 +8,9 @@ apt-get update
 apt-get upgrade -y
 
 # Force Locale
-echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
+apt-get install locales -y
 locale-gen en_US.UTF-8
+echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
 export LANG=en_US.UTF-8
 
 # Install ssh server
@@ -19,19 +20,22 @@ sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_co
 sed -i "s/UsePAM.*/UsePAM no/g" /etc/ssh/sshd_config
 sed -i "s/PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
 
+apt-get install -y software-properties-common curl
+
 # PPA
-apt-add-repository ppa:nginx/development -y
-apt-add-repository ppa:chris-lea/redis-server -y
-apt-add-repository ppa:ondrej/php -y
+apt-get-add-repository ppa:nginx/development -y
+apt-get-add-repository ppa:chris-lea/redis-server -y
+LC_ALL=C.UTF-8 apt-get-add-repository ppa:ondrej/php -y
+curl --silent --location https://deb.nodesource.com/setup_6.x | bash -
 
 # Update Package Lists
 apt-get update
 
 # Basic packages
-apt-get install -y sudo software-properties-common nano curl \
-build-essential dos2unix gcc git git-flow libmcrypt4 libpcre3-dev apt-utils \
-make python2.7-dev python-pip re2c supervisor unattended-upgrades whois \
-vim zip unzip libnotify-bin
+apt-get install -y sudo nano \
+build-essential dos2unix gcc git libmcrypt4 libpcre3-dev ntp unzip \
+make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim libnotify-bin \
+pv cifs-utils
 
 # Create homestead user
 adduser homestead
@@ -45,10 +49,10 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 # PHP
 apt-get install -y --force-yes php7.0-cli php7.0-dev \
-php-sqlite3 php-gd php-apcu php-pear php-zip\
-php-curl php7.0-mcrypt php-redis php-gmp\
+php-sqlite3 php-gd php-apcu php-pear \
+php-curl php7.0-mcrypt php-redis php-gmp \
 php-imap php-mysql php-memcached php7.0-readline php-xdebug \
-php-mbstring php-xml php7.0-zip php7.0-intl php7.0-bcmath php-soap
+php-mbstring php-xml php7.0-zip php-soap
 
 # Nginx & PHP-FPM
 apt-get install -y nginx php-fpm
@@ -132,7 +136,6 @@ sed -i "s/;listen\.group.*/listen.group = homestead/" /etc/php/7.0/fpm/pool.d/ww
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.0/fpm/pool.d/www.conf
 
 # Install Node
-curl --silent --location https://deb.nodesource.com/setup_4.x | bash -
 apt-get install -y nodejs
 npm install -g grunt-cli
 npm install -g gulp-cli
@@ -151,6 +154,14 @@ sed -i "s/#START=yes/START=no/" /etc/default/beanstalkd
 # Redis
 apt-get install -y redis-server
 sed -i "s/daemonize yes/daemonize no/" /etc/redis/redis.conf
+
+# Install The Chrome Web Driver & Dusk Utilities
+
+apt-get -y install libxpm4 libxrender1 libgtk2.0-0 \
+libnss3 libgconf-2-4 chromium-browser \
+xvfb gtk2-engines-pixbuf xfonts-cyrillic \
+xfonts-100dpi xfonts-75dpi xfonts-base \
+xfonts-scalable imagemagick x11-apps
 
 # Configure default nginx site
 block="server {
@@ -195,3 +206,19 @@ rm /etc/nginx/sites-available/default
 
 cat > /etc/nginx/sites-enabled/default
 echo "$block" > "/etc/nginx/sites-enabled/default"
+touch /home/homestead/testing
+
+# Install CSH ZSH Shell Theme
+sudo apt-get install zsh -y
+chsh -s $(which zsh)
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
+# Clean Up
+
+apt-get -y autoremove
+apt-get -y clean
+
+echo "Minimizing disk image..."
+dd if=/dev/zero of=/EMPTY bs=1M
+rm -f /EMPTY
+sync

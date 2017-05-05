@@ -3,6 +3,8 @@ MAINTAINER Jaouad E. <jaouad.elmoussaoui@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+
 # Install packages
 ADD provision.sh /provision.sh
 ADD serve.sh /serve.sh
