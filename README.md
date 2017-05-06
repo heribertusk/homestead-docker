@@ -1,6 +1,16 @@
 # Laravel homestead-docker
 Create a homestead docker container for your development env. ( files taken from laravel settler: provision.sh (modified) + serve.sh )
 
+### Features
+* Support multiple project
+* Ubuntu 16.04 as web container
+* webhippie/mariadb as database container
+* PHP Version 7.0
+* serve.sh tools for easy vhost creating
+* Provision package for webserver container based on laravel settler (https://github.com/laravel/settler/blob/master/scripts/provision.sh)
+* Nodejs 6, gulp, bower, yarn, gulp-cli installed as global package
+* redis-server, redis-cli included
+
 ### Install docker && docker compose
 please refer to these tutorials:
 * install docker (https://docs.docker.com/installation/ubuntulinux/)
