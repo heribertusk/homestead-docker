@@ -207,14 +207,10 @@ rm /etc/nginx/sites-available/default
 cat > /etc/nginx/sites-enabled/default
 echo "$block" > "/etc/nginx/sites-enabled/default"
 
-# Install CSH ZSH Shell Theme
-sudo apt-get install zsh -y
-chsh -s $(which zsh)
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-
 # Clean Up
 
 apt-get -y autoremove
+apt-get -y autoclean
 apt-get -y clean
 
 echo "Minimizing disk image..."
