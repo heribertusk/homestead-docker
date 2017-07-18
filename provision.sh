@@ -50,7 +50,7 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 # PHP
 apt-get install -y --force-yes php7.0-cli php7.0-dev \
 php-sqlite3 php-gd php-apcu php-pear \
-php-curl php7.0-mcrypt php-redis php-gmp \
+php-curl php7.0-mcrypt php-redis php-gmp php-bcmath \
 php-imap php-mysql php-memcached php7.0-readline php-xdebug \
 php-mbstring php-xml php7.0-zip php-soap
 
