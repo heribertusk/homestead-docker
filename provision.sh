@@ -48,11 +48,11 @@ usermod -aG www-data homestead
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 # PHP
-apt-get install -y --force-yes php7.0-cli php7.0-dev \
-php-sqlite3 php-gd php-apcu php-pear \
-php-curl php7.0-mcrypt php-redis php-gmp php-bcmath \
-php-imap php-mysql php-memcached php7.0-readline php-xdebug \
-php-mbstring php-xml php7.0-zip php-soap
+apt-get install -y --force-yes php7.0 php7.0-cli php7.0-dev \
+php7.0-sqlite3 php7.0-gd php-apcu php-pear \
+php7.0-curl php7.0-mcrypt php-redis php7.0-gmp php7.0-bcmath \
+php7.0-imap php7.0-mysql php7.0-memcached php7.0-readline php7.0-xdebug \
+php7.0-mbstring php7.0-xml php7.0-zip php7.0-soap
 
 # Nginx & PHP-FPM
 apt-get install -y nginx php-fpm
