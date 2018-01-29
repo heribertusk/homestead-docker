@@ -1,4 +1,4 @@
-# Laravel homestead-docker
+# Laravel homestead-docker (forked from: https://github.com/shincoder/homestead-docker)
 Create a homestead docker container for your development env. ( files taken from laravel settler: provision.sh (modified) + serve.sh )
 
 ### Features
